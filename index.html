@@ -9,276 +9,373 @@
     
     <style>
         :root {
-            --bg-color: #FFF9F2;
-            --primary: #FF8BA7;
-            --text: #5D5656;
-            --card-bg: #FFFFFF;
-            --nav-active: #FF6B6B;
-            --safe-bottom: env(safe-area-inset-bottom);
+            /* 手繪風配色 */
+            --bg-paper: #FFFBF5; /* 溫暖紙張色 */
+            --primary-pink: #FFB7C5; /* 櫻花粉 */
+            --primary-blue: #AEEEEE; /* 冰雪藍 */
+            --primary-green: #C1E1C1; /* 薄荷綠 */
+            --primary-yellow: #FDFD96; /* 奶油黃 */
+            --text-color: #5A5A5A; /* 鉛筆灰 */
+            --sketch-shadow: 3px 3px 0px rgba(0,0,0,0.15); /* 手繪硬陰影 */
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
-        body {
-            font-family: 'Zen Maru Gothic', sans-serif;
-            background-color: var(--bg-color);
-            background-image: radial-gradient(#E8DFD8 2px, transparent 2px);
-            background-size: 20px 20px;
-            color: var(--text);
-            margin: 0;
-            padding: 0;
-            padding-bottom: 100px;
+        /* 雪花特效容器 */
+        #snow-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; /* 讓雪花不影響點擊 */
+            z-index: 9999;
         }
 
-        /* --- 頂部標題 --- */
+        .snowflake {
+            position: absolute;
+            top: -10px;
+            color: #FFF;
+            font-size: 1em;
+            opacity: 0.8;
+            user-select: none;
+        }
+
+        @keyframes snowfall {
+            0% { transform: translateY(0) rotate(0deg); }
+            100% { transform: translateY(100vh) rotate(360deg); }
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background-color: var(--bg-paper);
+            /* 模擬水彩紙質感 */
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23noise)' opacity='0.05'/%3E%3C/svg%3E");
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            padding-bottom: 110px;
+            overflow-x: hidden;
+        }
+
+        /* --- 頂部標題 (手撕紙效果) --- */
         .header {
-            background: rgba(255,255,255,0.95);
-            backdrop-filter: blur(10px);
-            padding: 15px;
+            background: #FFF;
+            padding: 20px 15px 25px;
             text-align: center;
             position: sticky;
             top: 0;
             z-index: 50;
-            border-bottom: 1px solid #EEE;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+            /* 手撕邊緣效果 */
+            mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1000 100' preserveAspectRatio='none'%3E%3Cpath d='M0,0 L1000,0 L1000,100 C950,80 900,100 850,90 C800,80 750,100 700,90 C650,80 600,100 550,90 C500,80 450,100 400,90 C350,80 300,100 250,90 C200,80 150,100 100,90 C50,80 0,100 0,100 Z' fill='black'/%3E%3C/svg%3E");
+            mask-position: bottom;
+            mask-size: 100% 20px;
+            mask-repeat: no-repeat;
+            border-bottom: 5px solid var(--primary-pink);
+            box-shadow: 0 5px 15px rgba(255, 183, 197, 0.3);
         }
-        .header h1 { margin: 0; color: #FF6B6B; font-size: 20px; }
-        .header p { margin: 4px 0 0; color: #AAA; font-size: 12px; }
+        .header h1 { margin: 0; color: #FF6B6B; font-size: 24px; letter-spacing: 1px; }
+        .header p { margin: 8px 0 0; color: #999; font-size: 13px; background: #F0F0F0; display: inline-block; padding: 4px 12px; border-radius: 20px; transform: rotate(-2deg); }
 
         /* --- 頁面容器 --- */
         .page-container {
             position: relative;
-            padding: 20px;
+            padding: 25px 20px;
             max-width: 600px;
             margin: 0 auto;
         }
 
         .tab-content {
-            display: none; /* 預設隱藏 */
-            animation: fadeIn 0.3s ease;
+            display: none;
+            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Q彈出現效果 */
         }
         .tab-content.active { display: block; }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(5px); }
-            to { opacity: 1; transform: translateY(0); }
+        @keyframes popIn {
+            from { opacity: 0; transform: scale(0.95) translateY(10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
         }
 
-        /* --- 行程卡片 --- */
+        /* --- 手繪感行程卡片 --- */
         .card {
             background: #FFF;
-            border-radius: 16px;
-            padding: 16px;
-            margin-bottom: 16px;
-            box-shadow: 3px 3px 0px rgba(0,0,0,0.05);
-            border: 2px solid #FFF;
+            /* 不規則圓角，模擬手剪 */
+            border-radius: 20px 15px 25px 18px;
+            padding: 20px 18px;
+            margin-bottom: 25px;
+            /* 鉛筆素描陰影 */
+            box-shadow: var(--sketch-shadow);
+            border: 2px solid #444; /* 鉛筆邊框線 */
             position: relative;
             cursor: pointer;
             transition: transform 0.1s;
+            overflow: visible;
         }
-        .card:active { transform: scale(0.97); }
+        .card:active { transform: scale(0.98); box-shadow: 1px 1px 0px rgba(0,0,0,0.15); }
+
+        /* 紙膠帶效果 (Washi Tape) */
+        .card::before {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: 20px;
+            width: 60px;
+            height: 18px;
+            background: var(--primary-pink);
+            /* 條紋圖案 */
+            background-image: repeating-linear-gradient(45deg, transparent, transparent 5px, rgba(255,255,255,0.4) 5px, rgba(255,255,255,0.4) 10px);
+            transform: rotate(-3deg);
+            box-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+            opacity: 0.8;
+        }
+
+        /* 不同天不同膠帶顏色 */
+        #day2 .card::before { background-color: var(--primary-blue); }
+        #day3 .card::before { background-color: var(--primary-green); }
+        #day4 .card::before { background-color: var(--primary-yellow); }
         
-        /* 讓使用者知道可以點 */
+        /* 卡片右側手指提示 */
         .card::after {
             content: "👉";
             position: absolute;
-            right: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 18px;
-            opacity: 0.3;
+            right: 10px;
+            bottom: 10px;
+            font-size: 20px;
+            opacity: 0.5;
+            transform: rotate(-15deg);
+            filter: drop-shadow(2px 2px 0 #FFF); /* 貼紙白邊效果 */
         }
 
         .time-badge {
             display: inline-block;
-            background: #F0F0F0;
-            color: #888;
+            background: #333;
+            color: #FFF;
             font-weight: bold;
-            padding: 4px 8px;
-            border-radius: 8px;
-            font-size: 12px;
-            margin-bottom: 8px;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 14px;
+            margin-bottom: 10px;
+            transform: rotate(-2deg); /* 微微傾斜 */
+            box-shadow: 2px 2px 0px #888;
         }
 
-        .card h3 { margin: 0 0 4px; font-size: 17px; color: #444; }
-        .card p { margin: 0; font-size: 13px; color: #888; }
+        .card h3 { margin: 0 0 6px; font-size: 19px; color: #333; }
+        .card p { margin: 0; font-size: 14px; color: #777; line-height: 1.5; }
 
-        /* 特殊樣式 */
-        .card.alert { border-left: 4px solid #FF6B6B; background: #FFF5F5; }
-        .card.food { border-left: 4px solid #FFC3A0; }
+        /* 特殊卡片樣式：警示便利貼 */
+        .card.alert {
+            background: #FFF5F5;
+            border-color: #FF6B6B;
+            transform: rotate(1deg); /* 貼歪一點 */
+        }
+        .card.alert::before { background-color: #FF6B6B; } /* 紅色膠帶 */
+        
+        /* 特殊卡片樣式：美食 */
+        .card.food { background: #FFFAFA; border-color: #FFC3A0; }
 
-        /* --- 底部導航 (Fixed) --- */
+        /* --- 底部手繪導航列 --- */
         .nav-bar {
             position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 92%;
+            max-width: 500px;
             background: #FFF;
             display: flex;
             justify-content: space-around;
-            padding: 10px 0 calc(10px + var(--safe-bottom));
-            box-shadow: 0 -4px 20px rgba(0,0,0,0.05);
+            padding: 12px;
+            /* 手繪邊框 */
+            border: 3px solid #333;
+            border-radius: 30px;
+            box-shadow: 5px 5px 0px rgba(0,0,0,0.2);
             z-index: 100;
         }
 
         .nav-btn {
             border: none;
             background: none;
-            color: #CCC;
+            color: #AAA;
             font-family: inherit;
-            font-size: 10px;
+            font-size: 11px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 4px;
+            gap: 5px;
             cursor: pointer;
             width: 20%;
+            transition: all 0.2s;
         }
 
-        .nav-icon { font-size: 20px; transition: transform 0.2s; }
+        /* 貼紙風 Icon */
+        .nav-icon { 
+            font-size: 24px; 
+            transition: transform 0.2s; 
+            filter: drop-shadow(2px 2px 0 #FFF) drop-shadow(3px 3px 0 rgba(0,0,0,0.1));
+        }
         
-        .nav-btn.active { color: var(--nav-active); font-weight: bold; }
-        .nav-btn.active .nav-icon { transform: translateY(-3px); }
+        .nav-btn.active { color: #FF6B6B; font-weight: bold; }
+        .nav-btn.active .nav-icon { transform: translateY(-5px) scale(1.1); }
 
-        /* --- 詳細彈出視窗 (Modal) --- */
+        /* --- 詳細彈出視窗 (Modal - 手帳內頁風格) --- */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0,0,0,0.6); /* 深色背景突出手帳 */
             z-index: 200;
             display: none;
             justify-content: center;
-            align-items: flex-end; /* 手機從下方滑出 */
-            backdrop-filter: blur(3px);
+            align-items: center;
+            padding: 20px;
+            backdrop-filter: blur(5px);
         }
         .modal-overlay.show { display: flex; }
 
         .modal-body {
             background: #FFF;
             width: 100%;
-            max-width: 600px;
-            height: 80vh; /* 佔據 80% 高度 */
-            border-top-left-radius: 24px;
-            border-top-right-radius: 24px;
-            padding: 24px;
+            max-width: 500px;
+            max-height: 85vh;
+            /* 筆記本邊緣 */
+            border-radius: 20px 5px 20px 5px;
+            border-right: 8px solid #EEE;
+            padding: 30px 25px;
             overflow-y: auto;
             position: relative;
-            animation: slideUp 0.3s ease;
+            animation: unfold 0.4s ease;
+            box-shadow: 10px 10px 30px rgba(0,0,0,0.3);
+            /* 內頁橫線 */
+            background-image: linear-gradient(#E1E1E1 1px, transparent 1px);
+            background-size: 100% 30px;
+            line-height: 30px;
         }
 
-        @keyframes slideUp {
-            from { transform: translateY(100%); }
-            to { transform: translateY(0); }
+        @keyframes unfold {
+            from { transform: scaleY(0.1) scaleX(0.8); opacity: 0; }
+            to { transform: scaleY(1) scaleX(1); opacity: 1; }
         }
 
         .close-btn {
             position: absolute;
             top: 15px;
-            right: 15px;
-            background: #F5F5F5;
-            border: none;
-            width: 32px;
-            height: 32px;
+            right: 25px;
+            background: #FF6B6B;
+            border: 2px solid #333;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
-            font-size: 16px;
-            color: #666;
+            font-size: 20px;
+            color: #FFF;
             cursor: pointer;
+            box-shadow: 2px 2px 0 #333;
         }
 
-        /* Modal 內容美化 */
         .detail-header {
-            border-bottom: 2px dashed #EEE;
+            border-bottom: 3px dashed #333;
             padding-bottom: 15px;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
+            text-align: center;
         }
-        .detail-time { color: #FF8BA7; font-weight: bold; font-size: 14px; }
-        .detail-title { margin: 5px 0 0; font-size: 22px; color: #333; }
+        .detail-time { background: #333; color: #FFF; padding: 2px 10px; border-radius: 10px; font-size: 14px; display: inline-block; transform: rotate(-2deg); }
+        .detail-title { margin: 10px 0 0; font-size: 24px; color: #333; font-weight: bold; }
         
         .section-title {
             background: #FFDAC1;
             display: inline-block;
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-size: 13px;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 15px;
             color: #5D4037;
-            margin-top: 15px;
-            margin-bottom: 8px;
+            margin-top: 20px;
+            margin-bottom: 10px;
             font-weight: bold;
+            border: 2px solid #333;
+            box-shadow: 2px 2px 0 rgba(0,0,0,0.1);
+            transform: rotate(-1deg);
         }
 
-        .detail-text { font-size: 15px; line-height: 1.6; color: #555; }
+        .detail-text { font-size: 16px; color: #444; }
         
+        /* Plan B 黃色便利貼 */
         .plan-b-box {
-            background: #FFF8E1;
-            border: 1px solid #FFECB3;
-            color: #BCAAA4;
-            padding: 12px;
-            border-radius: 12px;
-            margin-top: 10px;
+            background: #FFF9C4;
+            border: 2px solid #FBC02D;
+            color: #5D4037;
+            padding: 15px;
+            border-radius: 0px 20px 0px 20px; /* 不規則 */
+            margin-top: 15px;
+            box-shadow: 3px 3px 0 rgba(0,0,0,0.1);
+            transform: rotate(1deg);
         }
-        .plan-b-box strong { color: #F57F17; display: block; margin-bottom: 4px; }
+        .plan-b-box strong { color: #E65100; display: block; margin-bottom: 5px; font-size: 18px; }
 
         /* Google Maps 按鈕 */
         .map-btn {
-            display: block;
+            display: flex;
             width: 100%;
-            background: #E8F5E9;
-            color: #2E7D32;
+            background: #C8E6C9;
+            color: #1B5E20;
             text-align: center;
-            padding: 12px;
-            border-radius: 12px;
+            padding: 15px;
+            border-radius: 15px;
             text-decoration: none;
             font-weight: bold;
-            margin-top: 20px;
-            border: 1px solid #C8E6C9;
-            display: flex;
+            margin-top: 25px;
+            border: 3px solid #333;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 10px;
+            box-shadow: 4px 4px 0 #333;
+            transition: all 0.1s;
         }
+        .map-btn:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 #333; }
 
         /* Checklist 樣式 */
         .checklist-item {
             background: #FFF;
-            padding: 12px;
-            margin-bottom: 10px;
-            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 15px;
             display: flex;
             align-items: center;
-            box-shadow: 2px 2px 0 rgba(0,0,0,0.03);
+            box-shadow: var(--sketch-shadow);
+            border: 2px solid #333;
         }
-        .checklist-item input { width: 20px; height: 20px; margin-right: 12px; accent-color: #FF8BA7; }
+        .checklist-item input { width: 24px; height: 24px; margin-right: 15px; accent-color: #FF8BA7; border: 2px solid #333; }
 
     </style>
 </head>
 <body>
+    <div id="snow-container"></div>
 
     <div class="header">
         <h1>🎄 香港聖誕親子手帳</h1>
-        <p>👨‍⚕️ 醫師爸爸版 v4.0</p>
+        <p>👨‍⚕️ 醫師爸爸特種兵・手繪紀錄版</p>
     </div>
 
     <div class="page-container">
         
         <div id="day1" class="tab-content active">
-            <div style="text-align:center; margin-bottom:15px; color:#FF8BA7;">12/23 (二) 聖誕全餐</div>
+            <div style="text-align:center; margin-bottom:20px;">
+                <span style="background:var(--primary-pink); color:#FFF; padding:5px 15px; border-radius:20px; font-weight:bold; border:2px solid #333; box-shadow:3px 3px 0 rgba(0,0,0,0.1); transform:rotate(-2deg); display:inline-block;">12/23 (二) 聖誕全餐</span>
+            </div>
             
             <div class="card food" onclick="openModal('m-d1-1')">
                 <span class="time-badge">10:30</span>
                 <h3>🍜 機場早午餐：何洪記</h3>
-                <p>吃飽才有力氣。</p>
+                <p>吃飽才有力氣。推薦雲吞麵。</p>
             </div>
 
             <div class="card alert" onclick="openModal('m-d1-2')">
                 <span class="time-badge">12:45</span>
-                <h3>😴 飯店強制午睡 (關鍵)</h3>
+                <h3>😴 飯店強制午睡 (關鍵!)</h3>
                 <p>探索家酒店。若沒睡晚上會崩潰。</p>
             </div>
 
             <div class="card" onclick="openModal('m-d1-3')">
                 <span class="time-badge">15:00</span>
                 <h3>🏰 入園 & 室內設施</h3>
-                <p>小小世界、迷離大宅。</p>
+                <p>小小世界、迷離大宅 (冷氣房)。</p>
             </div>
 
             <div class="card" onclick="openModal('m-d1-4')">
@@ -290,12 +387,14 @@
             <div class="card alert" onclick="openModal('m-d1-5')">
                 <span class="time-badge">20:30</span>
                 <h3>🎆 煙火 & 閃電撤退</h3>
-                <p>站在火車站看，結束秒撤。</p>
+                <p>站在火車站看，結束秒撤！</p>
             </div>
         </div>
 
         <div id="day2" class="tab-content">
-            <div style="text-align:center; margin-bottom:15px; color:#5D9CEC;">12/24 (三) 平安夜撤退</div>
+             <div style="text-align:center; margin-bottom:20px;">
+                <span style="background:var(--primary-blue); color:#333; padding:5px 15px; border-radius:20px; font-weight:bold; border:2px solid #333; box-shadow:3px 3px 0 rgba(0,0,0,0.1); transform:rotate(1deg); display:inline-block;">12/24 (三) 平安夜撤退</span>
+            </div>
             
             <div class="card" onclick="openModal('m-d2-1')">
                 <span class="time-badge">10:00</span>
@@ -318,7 +417,7 @@
             <div class="card alert" onclick="openModal('m-d2-4')">
                 <span class="time-badge">16:00</span>
                 <h3>🚨 嚴格執行：離園</h3>
-                <p>搭計程車去佐敦，避開平安夜塞車。</p>
+                <p>搭計程車去佐敦，絕不能遲到。</p>
             </div>
 
             <div class="card food" onclick="openModal('m-d2-5')">
@@ -329,7 +428,9 @@
         </div>
 
         <div id="day3" class="tab-content">
-            <div style="text-align:center; margin-bottom:15px; color:#48CFAD;">12/25 (四) 聖誕海景</div>
+             <div style="text-align:center; margin-bottom:20px;">
+                <span style="background:var(--primary-green); color:#333; padding:5px 15px; border-radius:20px; font-weight:bold; border:2px solid #333; box-shadow:3px 3px 0 rgba(0,0,0,0.1); transform:rotate(-1deg); display:inline-block;">12/25 (四) 聖誕海景</span>
+            </div>
             
             <div class="card food" onclick="openModal('m-d3-1')">
                 <span class="time-badge">09:30</span>
@@ -363,7 +464,9 @@
         </div>
 
         <div id="day4" class="tab-content">
-            <div style="text-align:center; margin-bottom:15px; color:#FFCE54;">12/26 (五) Outlet & 回家</div>
+             <div style="text-align:center; margin-bottom:20px;">
+                <span style="background:var(--primary-yellow); color:#333; padding:5px 15px; border-radius:20px; font-weight:bold; border:2px solid #333; box-shadow:3px 3px 0 rgba(0,0,0,0.1); transform:rotate(2deg); display:inline-block;">12/26 (五) Outlet & 回家</span>
+            </div>
             
             <div class="card food" onclick="openModal('m-d4-1')">
                 <span class="time-badge">08:30</span>
@@ -385,25 +488,27 @@
         </div>
 
         <div id="checklist" class="tab-content">
-            <div style="text-align:center; margin-bottom:15px; color:#AC92EC;">行前準備 & 清單</div>
+             <div style="text-align:center; margin-bottom:20px;">
+                <span style="background:#D1C4E9; color:#333; padding:5px 15px; border-radius:20px; font-weight:bold; border:2px solid #333; box-shadow:3px 3px 0 rgba(0,0,0,0.1); transform:rotate(0deg); display:inline-block;">🎒 行前準備清單</span>
+            </div>
             
             <div class="section-title">👶 幼兒安撫/生存</div>
-            <div class="checklist-item"><label><input type="checkbox"> 小被被/安撫玩偶 (不能洗!)</label></div>
-            <div class="checklist-item"><label><input type="checkbox"> 米餅/果凍/零食 (排隊神器)</label></div>
-            <div class="checklist-item"><label><input type="checkbox"> 降噪耳機/耳塞 (怕煙火聲)</label></div>
-            <div class="checklist-item"><label><input type="checkbox"> 貼紙書/小玩具</label></div>
+            <div class="checklist-item"><label style="display:flex;align-items:center;width:100%"><input type="checkbox"> 小被被/安撫玩偶 (不能洗!)</label></div>
+            <div class="checklist-item"><label style="display:flex;align-items:center;width:100%"><input type="checkbox"> 米餅/果凍/零食 (排隊神器)</label></div>
+            <div class="checklist-item"><label style="display:flex;align-items:center;width:100%"><input type="checkbox"> 降噪耳機/耳塞 (怕煙火聲)</label></div>
+            <div class="checklist-item"><label style="display:flex;align-items:center;width:100%"><input type="checkbox"> 貼紙書/小玩具</label></div>
 
             <div class="section-title">💊 醫師爸爸藥包</div>
-            <div class="checklist-item"><label><input type="checkbox"> 退燒藥 (Antipyretics)</label></div>
-            <div class="checklist-item"><label><input type="checkbox"> 益生菌/腸胃藥</label></div>
-            <div class="checklist-item"><label><input type="checkbox"> 暈車藥/貼片</label></div>
-            <div class="checklist-item"><label><input type="checkbox"> 外傷藥膏/OK繃</label></div>
+            <div class="checklist-item"><label style="display:flex;align-items:center;width:100%"><input type="checkbox"> 退燒藥 (Antipyretics)</label></div>
+            <div class="checklist-item"><label style="display:flex;align-items:center;width:100%"><input type="checkbox"> 益生菌/腸胃藥</label></div>
+            <div class="checklist-item"><label style="display:flex;align-items:center;width:100%"><input type="checkbox"> 暈車藥/貼片</label></div>
+            <div class="checklist-item"><label style="display:flex;align-items:center;width:100%"><input type="checkbox"> 外傷藥膏/OK繃</label></div>
 
             <div class="section-title">👔 衣物 & 雜項</div>
-            <div class="checklist-item"><label><input type="checkbox"> 薄羽絨背心 (洋蔥式穿法)</label></div>
-            <div class="checklist-item"><label><input type="checkbox"> 備用衣物 x 2 (玩Frozen會濕)</label></div>
-            <div class="checklist-item"><label><input type="checkbox"> 輕便推車 (戰車不好上下車)</label></div>
-            <div class="checklist-item"><label><input type="checkbox"> 港幣現金 (計程車/小吃)</label></div>
+            <div class="checklist-item"><label style="display:flex;align-items:center;width:100%"><input type="checkbox"> 薄羽絨背心 (洋蔥式穿法)</label></div>
+            <div class="checklist-item"><label style="display:flex;align-items:center;width:100%"><input type="checkbox"> 備用衣物 x 2 (玩Frozen會濕)</label></div>
+            <div class="checklist-item"><label style="display:flex;align-items:center;width:100%"><input type="checkbox"> 輕便推車 (戰車不好上下車)</label></div>
+            <div class="checklist-item"><label style="display:flex;align-items:center;width:100%"><input type="checkbox"> 港幣現金 (計程車/小吃)</label></div>
         </div>
 
     </div>
@@ -422,11 +527,12 @@
             <span class="nav-icon">✈️</span> Day 4
         </button>
         <button class="nav-btn" onclick="switchTab('checklist', this)">
-            <span class="nav-icon">🎒</span> 準備
+            <span class="nav-icon">🎒</span> 清單
         </button>
     </div>
 
     <div id="modal-overlay" class="modal-overlay" onclick="closeModal(event)">
+        
         <div id="m-d1-1" class="modal-body" style="display:none;">
             <button class="close-btn" onclick="closeModalDirect()">×</button>
             <div class="detail-header">
@@ -441,10 +547,10 @@
         <div id="m-d1-2" class="modal-body" style="display:none;">
             <button class="close-btn" onclick="closeModalDirect()">×</button>
             <div class="detail-header">
-                <div class="detail-time">Day 1 - 12:45</div>
+                <div class="detail-time" style="background:#FF6B6B">Day 1 - 12:45</div>
                 <h2 class="detail-title">探索家酒店午睡</h2>
             </div>
-            <div class="section-title">⚠️ 戰術指令</div>
+            <div class="section-title" style="background:#FFCDD2;color:#C62828;">⚠️ 戰術指令</div>
             <div class="detail-text">不要急著入園！Check-in 後，先在飯店大廳或戶外「雨林花園」推推車讓小孩午睡 1.5 小時。</div>
             <div class="plan-b-box">
                 <strong>💡 PLAN B (如果大廳太吵)</strong>
@@ -476,10 +582,10 @@
         <div id="m-d1-5" class="modal-body" style="display:none;">
             <button class="close-btn" onclick="closeModalDirect()">×</button>
             <div class="detail-header">
-                <div class="detail-time">Day 1 - 20:30</div>
+                <div class="detail-time" style="background:#FF6B6B">Day 1 - 20:30</div>
                 <h2 class="detail-title">煙火 & 閃電撤退</h2>
             </div>
-            <div class="section-title">⚠️ 撤退戰術</div>
+            <div class="section-title" style="background:#FFCDD2;color:#C62828;">⚠️ 撤退戰術</div>
             <div class="detail-text">不需要擠到城堡正前方。建議在**「美國小鎮大街火車站（入口處）」**附近看。煙火最後一發打完，立刻轉身離園，搶首批接駁車回飯店。</div>
         </div>
 
@@ -520,10 +626,10 @@
         <div id="m-d2-4" class="modal-body" style="display:none;">
             <button class="close-btn" onclick="closeModalDirect()">×</button>
             <div class="detail-header">
-                <div class="detail-time">Day 2 - 16:00</div>
+                <div class="detail-time" style="background:#FF6B6B">Day 2 - 16:00</div>
                 <h2 class="detail-title">嚴格執行：離園撤退</h2>
             </div>
-            <div class="section-title">🚨 Critical Checkpoint</div>
+            <div class="section-title" style="background:#FFCDD2;color:#C62828;">🚨 Critical Checkpoint</div>
             <div class="detail-text">平安夜香港交通極為恐怖。一定要在 16:30 前搭上計程車離開大嶼山前往佐敦。</div>
         </div>
 
@@ -535,7 +641,7 @@
             </div>
             <div class="section-title">🍽️ 米其林一星</div>
             <div class="detail-text">位於逸東酒店 B2 (已預訂)。吃完直接上樓回房休息。</div>
-            <a href="https://www.google.com/maps/search/?api=1&query=逸東軒+香港" target="_blank" class="map-btn">📍 Google Maps 導航</a>
+            <a href="https://www.google.com/maps/search/?api=1&query=香港逸東酒店+逸東軒" target="_blank" class="map-btn">📍 Google Maps 導航</a>
         </div>
 
         <div id="m-d3-1" class="modal-body" style="display:none;">
@@ -556,6 +662,7 @@
             </div>
             <div class="section-title">💡 搭乘技巧</div>
             <div class="detail-text">尖沙咀碼頭 → 中環碼頭。記得搭**上層 (Upper Deck)**，空氣好視野佳。推車上下船需注意坡度。</div>
+            <a href="https://www.google.com/maps/search/?api=1&query=尖沙咀天星碼頭" target="_blank" class="map-btn">📍 Google Maps 導航</a>
         </div>
 
         <div id="m-d3-3" class="modal-body" style="display:none;">
@@ -595,7 +702,7 @@
                 <strong>💡 PLAN B (如果爆滿)</strong>
                 撤退至上方 Elements 圓方商場，吃 **PizzaExpress** (親子友善，有畫筆)。
             </div>
-            <a href="https://www.google.com/maps/search/?api=1&query=Cafe+Boheme+Hong+Kong" target="_blank" class="map-btn">📍 Google Maps 導航</a>
+            <a href="https://www.google.com/maps/search/?api=1&query=Cafe+Bohème+西九" target="_blank" class="map-btn">📍 Google Maps 導航</a>
         </div>
 
         <div id="m-d4-1" class="modal-body" style="display:none;">
@@ -617,31 +724,51 @@
             </div>
             <div class="section-title">🧳 寄物提示</div>
             <div class="detail-text">先去東薈城 (Citygate) B2/B3 找寄物櫃。若滿了，詢問服務台人工寄存。</div>
-            <a href="https://www.google.com/maps/search/?api=1&query=昂坪360" target="_blank" class="map-btn">📍 Google Maps 導航</a>
+            <a href="https://www.google.com/maps/search/?api=1&query=昂坪360東涌纜車站" target="_blank" class="map-btn">📍 Google Maps 導航</a>
         </div>
 
     </div>
 
     <script>
+        // 雪花特效腳本
+        function createSnowflakes() {
+            const container = document.getElementById('snow-container');
+            const snowflakeCount = 50; // 雪花數量
+
+            for (let i = 0; i < snowflakeCount; i++) {
+                const snowflake = document.createElement('div');
+                snowflake.className = 'snowflake';
+                snowflake.innerHTML = '❄';
+                
+                // 隨機位置和大小
+                snowflake.style.left = Math.random() * 100 + 'vw';
+                snowflake.style.fontSize = (Math.random() * 15 + 10) + 'px';
+                snowflake.style.opacity = Math.random() * 0.6 + 0.2;
+                
+                // 隨機動畫時間和延遲
+                const duration = Math.random() * 10 + 10 + 's';
+                const delay = Math.random() * 5 + 's';
+                snowflake.style.animation = `snowfall ${duration} linear ${delay} infinite`;
+                
+                container.appendChild(snowflake);
+            }
+        }
+
         // 頁面切換邏輯
         function switchTab(tabId, btnElement) {
-            // 1. 隱藏所有 tab-content
             const contents = document.querySelectorAll('.tab-content');
             contents.forEach(content => {
                 content.classList.remove('active');
             });
 
-            // 2. 顯示目標 tab-content
             document.getElementById(tabId).classList.add('active');
 
-            // 3. 更新按鈕狀態
             const btns = document.querySelectorAll('.nav-btn');
             btns.forEach(btn => {
                 btn.classList.remove('active');
             });
             btnElement.classList.add('active');
 
-            // 4. 滾動到頂部
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
@@ -650,33 +777,31 @@
             const overlay = document.getElementById('modal-overlay');
             const bodies = document.querySelectorAll('.modal-body');
             
-            // 隱藏所有 modal-body
             bodies.forEach(body => body.style.display = 'none');
             
-            // 顯示目標 modal-body
             const target = document.getElementById(modalId);
             if(target) {
                 target.style.display = 'block';
                 overlay.classList.add('show');
-                // 禁止背景滾動
                 document.body.style.overflow = 'hidden';
             }
         }
 
-        // Modal 關閉邏輯 (點擊背景)
+        // Modal 關閉邏輯
         function closeModal(event) {
             if (event.target.id === 'modal-overlay') {
                 closeModalDirect();
             }
         }
 
-        // Modal 關閉邏輯 (點擊按鈕)
         function closeModalDirect() {
             const overlay = document.getElementById('modal-overlay');
             overlay.classList.remove('show');
-            // 恢復背景滾動
             document.body.style.overflow = '';
         }
+
+        // 啟動雪花
+        document.addEventListener('DOMContentLoaded', createSnowflakes);
     </script>
 </body>
 </html>
