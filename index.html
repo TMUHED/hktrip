@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>🎄 香港聖誕之旅</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            /* 馬卡龍色票 */
+            --bg-color: #FFF9F0;
+            --dot-color: #E6DFD5;
+            --day1-color: #FF9AA2; /* Soft Red */
+            --day2-color: #A2E1DB; /* Ice Blue */
+            --day3-color: #B5EAD7; /* Mint */
+            --day4-color: #FFDAC1; /* Peach */
+            --text-color: #5D5656;
+            --card-shadow: 4px 4px 0px rgba(0,0,0,0.08);
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background-color: var(--bg-color);
+            /* 背景點點紙效果 */
+            background-image: radial-gradient(var(--dot-color) 2px, transparent 2px);
+            background-size: 20px 20px;
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            padding-bottom: 80px;
+        }
+
+        /* 標題區：像一張大貼紙 */
+        header {
+            text-align: center;
+            background: #fff;
+            padding: 25px 20px;
+            border-radius: 30px;
+            border: 3px solid #FFF0F5;
+            box-shadow: 0 8px 20px rgba(255, 182, 193, 0.3);
+            margin-bottom: 25px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: "🎅";
+            font-size: 60px;
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            opacity: 0.2;
+            transform: rotate(15deg);
+        }
+
+        h1 {
+            font-family: 'Fredoka', 'Zen Maru Gothic', sans-serif;
+            color: #FF6B6B;
+            font-size: 26px;
+            margin: 0;
+            letter-spacing: 1px;
+        }
+
+        p.subtitle {
+            color: #888;
+            font-size: 14px;
+            margin-top: 5px;
+            background: #F0F0F0;
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 15px;
+        }
+
+        /* 選單：像糖果一樣的按鈕 */
+        .nav-pills {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+            justify-content: space-between;
+            scrollbar-width: none; /* Firefox */
+        }
+        .nav-pills::-webkit-scrollbar { display: none; }
+
+        .nav-item {
+            flex: 1;
+            border: none;
+            background: #fff;
+            padding: 12px 0;
+            border-radius: 20px;
+            font-family: 'Fredoka', sans-serif;
+            font-size: 16px;
+            color: #AAA;
+            cursor: pointer;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.05);
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Bouncy effect */
+            border: 2px solid transparent;
+            min-width: 70px;
+        }
+
+        .nav-item.active {
+            transform: translateY(-3px);
+            color: #fff;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        /* 依據不同天變換按鈕顏色 */
+        .nav-item[data-target="day1"].active { background: var(--day1-color); border-color: var(--day1-color); }
+        .nav-item[data-target="day2"].active { background: var(--day2-color); border-color: var(--day2-color); }
+        .nav-item[data-target="day3"].active { background: var(--day3-color); border-color: var(--day3-color); }
+        .nav-item[data-target="day4"].active { background: var(--day4-color); border-color: var(--day4-color); }
+
+        /* 內容區塊 */
+        .day-content {
+            display: none;
+            animation: popUp 0.4s ease;
+        }
+        .day-content.active { display: block; }
+
+        @keyframes popUp {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* 標題紙膠帶效果 */
+        .date-header {
+            text-align: center;
+            margin: 20px 0;
+            position: relative;
+        }
+        .date-header span {
+            background: #fff;
+            padding: 8px 20px;
+            font-weight: bold;
+            color: #555;
+            position: relative;
+            z-index: 2;
+            border-radius: 2px;
+            box-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            transform: rotate(-2deg);
+            display: inline-block;
+        }
+        /* 左右像撕下來的膠帶 */
+        .date-header span::after, .date-header span::before {
+            content: '';
+            position: absolute;
+            width: 10px;
+            height: 100%;
+            top: 0;
+            background: #fff;
+            background-image: radial-gradient(circle, #eee 2px, transparent 2px);
+            background-size: 4px 4px;
+        }
+        .date-header span::before { left: -5px; clip-path: polygon(0 0, 100% 0, 80% 100%, 0% 100%); }
+        .date-header span::after { right: -5px; clip-path: polygon(20% 0, 100% 0, 100% 100%, 0% 100%); }
+
+        /* 行程卡片：像拍立得或便利貼 */
+        .card {
+            background: #fff;
+            border-radius: 20px;
+            padding: 18px;
+            margin-bottom: 18px;
+            position: relative;
+            box-shadow: var(--card-shadow);
+            border: 2px solid #fff;
+        }
+
+        /* 不同天不同顏色的邊框裝飾 */
+        #day1 .card { border-left: 6px solid var(--day1-color); }
+        #day2 .card { border-left: 6px solid var(--day2-color); }
+        #day3 .card { border-left: 6px solid var(--day3-color); }
+        #day4 .card { border-left: 6px solid var(--day4-color); }
+
+        .time-tag {
+            display: inline-block;
+            background: #F0F0F0;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            color: #777;
+            margin-bottom: 8px;
+            font-family: 'Fredoka', sans-serif;
+        }
+
+        .card h3 {
+            margin: 0 0 5px 0;
+            font-size: 18px;
+            color: #444;
+        }
+        
+        /* 讓 emoji 變成大貼紙 */
+        .card .icon {
+            font-size: 24px;
+            vertical-align: middle;
+            margin-right: 5px;
+            filter: drop-shadow(2px 2px 0px rgba(0,0,0,0.1));
+        }
+
+        .card p {
+            margin: 0;
+            font-size: 15px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* 重點標示 Plan B */
+        .plan-b {
+            margin-top: 10px;
+            background: #FFF8E1;
+            padding: 10px;
+            border-radius: 12px;
+            border: 2px dashed #FFD54F;
+            color: #D68F00;
+            font-size: 13px;
+        }
+        .plan-b strong { display: block; margin-bottom: 2px; }
+
+        /* 警告便利貼 */
+        .alert-note {
+            background: #FFEBEE;
+            color: #C62828;
+            border: none !important;
+            transform: rotate(1deg);
+        }
+        /* 用圖釘裝飾 */
+        .alert-note::after {
+            content: '📌';
+            position: absolute;
+            top: -10px;
+            right: -5px;
+            font-size: 20px;
+        }
+
+        footer {
+            text-align: center;
+            font-size: 14px;
+            color: #aaa;
+            margin-top: 40px;
+        }
+        
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>🎄 香港聖誕親子行</h1>
+        <p class="subtitle">2025.12.23 - 12.26</p>
+    </header>
+
+    <div class="nav-pills">
+        <button class="nav-item active" data-target="day1" onclick="switchTab('day1', this)">12/23</button>
+        <button class="nav-item" data-target="day2" onclick="switchTab('day2', this)">12/24</button>
+        <button class="nav-item" data-target="day3" onclick="switchTab('day3', this)">12/25</button>
+        <button class="nav-item" data-target="day4" onclick="switchTab('day4', this)">12/26</button>
+    </div>
+
+    <div id="day1" class="day-content active">
+        <div class="date-header">
+            <span style="border-bottom: 4px solid var(--day1-color);">Day 1 聖誕全餐</span>
+        </div>
+
+        <div class="card">
+            <div class="time-tag">09:15</div>
+            <h3><span class="icon">✈️</span>抵達香港</h3>
+            <p>機場接機大堂集合。</p>
+        </div>
+
+        <div class="card">
+            <div class="time-tag">10:30</div>
+            <h3><span class="icon">🍜</span>何洪記粥麵</h3>
+            <p><strong>@機場T1</strong><br>吃飽飽好辦事！推薦鮮蝦雲吞麵、豬潤粥。</p>
+        </div>
+
+        <div class="card alert-note">
+            <div class="time-tag" style="background:rgba(255,255,255,0.5);">12:45</div>
+            <h3><span class="icon">😴</span>飯店午睡 (重要)</h3>
+            <p>先讓寶寶在<strong>探索家酒店</strong>大廳或花園推車睡 1.5 小時，晚上才有力氣！</p>
+        </div>
+
+        <div class="card">
+            <div class="time-tag">15:00</div>
+            <h3><span class="icon">🏰</span>進迪士尼囉！</h3>
+            <p>先玩室內冷氣房設施：<br>✨ 小小世界<br>✨ 迷離大宅</p>
+        </div>
+
+        <div class="card">
+            <div class="time-tag">18:20</div>
+            <h3><span class="icon">🎄</span>聖誕亮燈禮</h3>
+            <p><strong>@美國小鎮大街</strong><br>無人機 + 飄雪，超級夢幻！</p>
+        </div>
+
+        <div class="card" style="background:#2C3E50; color: white;">
+            <div class="time-tag" style="background:#fff; color:#333;">20:30</div>
+            <h3 style="color:#FFF;"><span class="icon">🎆</span>煙火 & 撤退</h3>
+            <p style="color:#EEE;">在火車站附近看。煙火一結束，立刻轉身回飯店洗澡睡覺！</p>
+        </div>
+    </div>
+
+    <div id="day2" class="day-content">
+        <div class="date-header">
+            <span style="border-bottom: 4px solid var(--day2-color);">Day 2 平安夜撤退</span>
+        </div>
+
+        <div class="card">
+            <div class="time-tag">10:00</div>
+            <h3><span class="icon">❄️</span>魔雪奇緣世界</h3>
+            <p>衝刺「魔雪奇幻之旅」！<br>(有小俯衝，記得幫寶寶備衣物)</p>
+        </div>
+
+        <div class="card">
+            <div class="time-tag">11:30</div>
+            <h3><span class="icon">🍽️</span>提早午餐</h3>
+            <p><strong>@大冒險家餐廳</strong><br>避開尖峰人潮。</p>
+        </div>
+
+        <div class="card">
+            <div class="time-tag">13:30</div>
+            <h3><span class="icon">📖</span>魔法書房</h3>
+            <p>爸媽的休息站！坐著吹冷氣看表演 30 分鐘。</p>
+        </div>
+
+        <div class="card alert-note">
+            <div class="time-tag" style="background:rgba(255,255,255,0.5);">16:00</div>
+            <h3><span class="icon">🚨</span>全家撤退！</h3>
+            <p>搭計程車去佐敦。<br>平安夜易塞車，<strong>絕對不能晚於 16:30</strong>。</p>
+        </div>
+
+        <div class="card">
+            <div class="time-tag">18:00</div>
+            <h3><span class="icon">🥘</span>逸東軒晚餐</h3>
+            <p>米其林一星粵菜 (已訂位)。吃完回房休息。</p>
+        </div>
+    </div>
+
+    <div id="day3" class="day-content">
+        <div class="date-header">
+            <span style="border-bottom: 4px solid var(--day3-color);">Day 3 聖誕海景</span>
+        </div>
+
+        <div class="card">
+            <div class="time-tag">09:30</div>
+            <h3><span class="icon">☕</span>紅茶冰室</h3>
+            <p>必吃冰鎮奶茶、菠蘿油！</p>
+        </div>
+
+        <div class="card">
+            <div class="time-
