@@ -3,349 +3,680 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>🎄 香港聖誕之旅</title>
+    <title>🎄 香港聖誕親子手帳</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            /* 馬卡龍色票 */
-            --bg-color: #FFF9F0;
-            --dot-color: #E6DFD5;
-            --day1-color: #FF9AA2; /* Soft Red */
-            --day2-color: #A2E1DB; /* Ice Blue */
-            --day3-color: #B5EAD7; /* Mint */
-            --day4-color: #FFDAC1; /* Peach */
-            --text-color: #5D5656;
-            --card-shadow: 4px 4px 0px rgba(0,0,0,0.08);
+            --bg-color: #FFF9F2;
+            --primary: #FF8BA7;
+            --text: #5D5656;
+            --card-bg: #FFFFFF;
+            --nav-active: #FF6B6B;
+            --safe-bottom: env(safe-area-inset-bottom);
         }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         body {
             font-family: 'Zen Maru Gothic', sans-serif;
             background-color: var(--bg-color);
-            /* 背景點點紙效果 */
-            background-image: radial-gradient(var(--dot-color) 2px, transparent 2px);
+            background-image: radial-gradient(#E8DFD8 2px, transparent 2px);
             background-size: 20px 20px;
-            color: var(--text-color);
+            color: var(--text);
             margin: 0;
-            padding: 20px;
-            padding-bottom: 80px;
+            padding: 0;
+            padding-bottom: 100px;
         }
 
-        /* 標題區：像一張大貼紙 */
-        header {
+        /* --- 頂部標題 --- */
+        .header {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px;
             text-align: center;
-            background: #fff;
-            padding: 25px 20px;
-            border-radius: 30px;
-            border: 3px solid #FFF0F5;
-            box-shadow: 0 8px 20px rgba(255, 182, 193, 0.3);
-            margin-bottom: 25px;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        header::before {
-            content: "🎅";
-            font-size: 60px;
-            position: absolute;
-            top: -10px;
-            right: -10px;
-            opacity: 0.2;
-            transform: rotate(15deg);
-        }
-
-        h1 {
-            font-family: 'Fredoka', 'Zen Maru Gothic', sans-serif;
-            color: #FF6B6B;
-            font-size: 26px;
-            margin: 0;
-            letter-spacing: 1px;
-        }
-
-        p.subtitle {
-            color: #888;
-            font-size: 14px;
-            margin-top: 5px;
-            background: #F0F0F0;
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 15px;
-        }
-
-        /* 選單：像糖果一樣的按鈕 */
-        .nav-pills {
-            display: flex;
-            gap: 10px;
-            overflow-x: auto;
-            padding-bottom: 10px;
-            justify-content: space-between;
-            scrollbar-width: none; /* Firefox */
-        }
-        .nav-pills::-webkit-scrollbar { display: none; }
-
-        .nav-item {
-            flex: 1;
-            border: none;
-            background: #fff;
-            padding: 12px 0;
-            border-radius: 20px;
-            font-family: 'Fredoka', sans-serif;
-            font-size: 16px;
-            color: #AAA;
-            cursor: pointer;
-            box-shadow: 2px 2px 5px rgba(0,0,0,0.05);
-            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Bouncy effect */
-            border: 2px solid transparent;
-            min-width: 70px;
-        }
-
-        .nav-item.active {
-            transform: translateY(-3px);
-            color: #fff;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-
-        /* 依據不同天變換按鈕顏色 */
-        .nav-item[data-target="day1"].active { background: var(--day1-color); border-color: var(--day1-color); }
-        .nav-item[data-target="day2"].active { background: var(--day2-color); border-color: var(--day2-color); }
-        .nav-item[data-target="day3"].active { background: var(--day3-color); border-color: var(--day3-color); }
-        .nav-item[data-target="day4"].active { background: var(--day4-color); border-color: var(--day4-color); }
-
-        /* 內容區塊 */
-        .day-content {
-            display: none;
-            animation: popUp 0.4s ease;
-        }
-        .day-content.active { display: block; }
-
-        @keyframes popUp {
-            from { opacity: 0; transform: scale(0.95); }
-            to { opacity: 1; transform: scale(1); }
-        }
-
-        /* 標題紙膠帶效果 */
-        .date-header {
-            text-align: center;
-            margin: 20px 0;
-            position: relative;
-        }
-        .date-header span {
-            background: #fff;
-            padding: 8px 20px;
-            font-weight: bold;
-            color: #555;
-            position: relative;
-            z-index: 2;
-            border-radius: 2px;
-            box-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-            transform: rotate(-2deg);
-            display: inline-block;
-        }
-        /* 左右像撕下來的膠帶 */
-        .date-header span::after, .date-header span::before {
-            content: '';
-            position: absolute;
-            width: 10px;
-            height: 100%;
+            position: sticky;
             top: 0;
-            background: #fff;
-            background-image: radial-gradient(circle, #eee 2px, transparent 2px);
-            background-size: 4px 4px;
+            z-index: 50;
+            border-bottom: 1px solid #EEE;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
         }
-        .date-header span::before { left: -5px; clip-path: polygon(0 0, 100% 0, 80% 100%, 0% 100%); }
-        .date-header span::after { right: -5px; clip-path: polygon(20% 0, 100% 0, 100% 100%, 0% 100%); }
+        .header h1 { margin: 0; color: #FF6B6B; font-size: 20px; }
+        .header p { margin: 4px 0 0; color: #AAA; font-size: 12px; }
 
-        /* 行程卡片：像拍立得或便利貼 */
-        .card {
-            background: #fff;
-            border-radius: 20px;
-            padding: 18px;
-            margin-bottom: 18px;
+        /* --- 頁面容器 --- */
+        .page-container {
             position: relative;
-            box-shadow: var(--card-shadow);
-            border: 2px solid #fff;
+            padding: 20px;
+            max-width: 600px;
+            margin: 0 auto;
         }
 
-        /* 不同天不同顏色的邊框裝飾 */
-        #day1 .card { border-left: 6px solid var(--day1-color); }
-        #day2 .card { border-left: 6px solid var(--day2-color); }
-        #day3 .card { border-left: 6px solid var(--day3-color); }
-        #day4 .card { border-left: 6px solid var(--day4-color); }
+        .tab-content {
+            display: none; /* 預設隱藏 */
+            animation: fadeIn 0.3s ease;
+        }
+        .tab-content.active { display: block; }
 
-        .time-tag {
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- 行程卡片 --- */
+        .card {
+            background: #FFF;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 3px 3px 0px rgba(0,0,0,0.05);
+            border: 2px solid #FFF;
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+        .card:active { transform: scale(0.97); }
+        
+        /* 讓使用者知道可以點 */
+        .card::after {
+            content: "👉";
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 18px;
+            opacity: 0.3;
+        }
+
+        .time-badge {
             display: inline-block;
             background: #F0F0F0;
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 14px;
-            font-weight: 700;
-            color: #777;
+            color: #888;
+            font-weight: bold;
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-size: 12px;
             margin-bottom: 8px;
-            font-family: 'Fredoka', sans-serif;
         }
 
-        .card h3 {
-            margin: 0 0 5px 0;
-            font-size: 18px;
-            color: #444;
+        .card h3 { margin: 0 0 4px; font-size: 17px; color: #444; }
+        .card p { margin: 0; font-size: 13px; color: #888; }
+
+        /* 特殊樣式 */
+        .card.alert { border-left: 4px solid #FF6B6B; background: #FFF5F5; }
+        .card.food { border-left: 4px solid #FFC3A0; }
+
+        /* --- 底部導航 (Fixed) --- */
+        .nav-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: #FFF;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0 calc(10px + var(--safe-bottom));
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.05);
+            z-index: 100;
         }
+
+        .nav-btn {
+            border: none;
+            background: none;
+            color: #CCC;
+            font-family: inherit;
+            font-size: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            width: 20%;
+        }
+
+        .nav-icon { font-size: 20px; transition: transform 0.2s; }
         
-        /* 讓 emoji 變成大貼紙 */
-        .card .icon {
-            font-size: 24px;
-            vertical-align: middle;
-            margin-right: 5px;
-            filter: drop-shadow(2px 2px 0px rgba(0,0,0,0.1));
+        .nav-btn.active { color: var(--nav-active); font-weight: bold; }
+        .nav-btn.active .nav-icon { transform: translateY(-3px); }
+
+        /* --- 詳細彈出視窗 (Modal) --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 200;
+            display: none;
+            justify-content: center;
+            align-items: flex-end; /* 手機從下方滑出 */
+            backdrop-filter: blur(3px);
+        }
+        .modal-overlay.show { display: flex; }
+
+        .modal-body {
+            background: #FFF;
+            width: 100%;
+            max-width: 600px;
+            height: 80vh; /* 佔據 80% 高度 */
+            border-top-left-radius: 24px;
+            border-top-right-radius: 24px;
+            padding: 24px;
+            overflow-y: auto;
+            position: relative;
+            animation: slideUp 0.3s ease;
         }
 
-        .card p {
-            margin: 0;
-            font-size: 15px;
-            color: #666;
-            line-height: 1.6;
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
         }
 
-        /* 重點標示 Plan B */
-        .plan-b {
-            margin-top: 10px;
-            background: #FFF8E1;
-            padding: 10px;
-            border-radius: 12px;
-            border: 2px dashed #FFD54F;
-            color: #D68F00;
-            font-size: 13px;
-        }
-        .plan-b strong { display: block; margin-bottom: 2px; }
-
-        /* 警告便利貼 */
-        .alert-note {
-            background: #FFEBEE;
-            color: #C62828;
-            border: none !important;
-            transform: rotate(1deg);
-        }
-        /* 用圖釘裝飾 */
-        .alert-note::after {
-            content: '📌';
+        .close-btn {
             position: absolute;
-            top: -10px;
-            right: -5px;
-            font-size: 20px;
+            top: 15px;
+            right: 15px;
+            background: #F5F5F5;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            font-size: 16px;
+            color: #666;
+            cursor: pointer;
         }
 
-        footer {
-            text-align: center;
-            font-size: 14px;
-            color: #aaa;
-            margin-top: 40px;
+        /* Modal 內容美化 */
+        .detail-header {
+            border-bottom: 2px dashed #EEE;
+            padding-bottom: 15px;
+            margin-bottom: 15px;
         }
+        .detail-time { color: #FF8BA7; font-weight: bold; font-size: 14px; }
+        .detail-title { margin: 5px 0 0; font-size: 22px; color: #333; }
         
+        .section-title {
+            background: #FFDAC1;
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 13px;
+            color: #5D4037;
+            margin-top: 15px;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        .detail-text { font-size: 15px; line-height: 1.6; color: #555; }
+        
+        .plan-b-box {
+            background: #FFF8E1;
+            border: 1px solid #FFECB3;
+            color: #BCAAA4;
+            padding: 12px;
+            border-radius: 12px;
+            margin-top: 10px;
+        }
+        .plan-b-box strong { color: #F57F17; display: block; margin-bottom: 4px; }
+
+        /* Google Maps 按鈕 */
+        .map-btn {
+            display: block;
+            width: 100%;
+            background: #E8F5E9;
+            color: #2E7D32;
+            text-align: center;
+            padding: 12px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 20px;
+            border: 1px solid #C8E6C9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        /* Checklist 樣式 */
+        .checklist-item {
+            background: #FFF;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            box-shadow: 2px 2px 0 rgba(0,0,0,0.03);
+        }
+        .checklist-item input { width: 20px; height: 20px; margin-right: 12px; accent-color: #FF8BA7; }
+
     </style>
 </head>
 <body>
 
-    <header>
-        <h1>🎄 香港聖誕親子行</h1>
-        <p class="subtitle">2025.12.23 - 12.26</p>
-    </header>
-
-    <div class="nav-pills">
-        <button class="nav-item active" data-target="day1" onclick="switchTab('day1', this)">12/23</button>
-        <button class="nav-item" data-target="day2" onclick="switchTab('day2', this)">12/24</button>
-        <button class="nav-item" data-target="day3" onclick="switchTab('day3', this)">12/25</button>
-        <button class="nav-item" data-target="day4" onclick="switchTab('day4', this)">12/26</button>
+    <div class="header">
+        <h1>🎄 香港聖誕親子手帳</h1>
+        <p>👨‍⚕️ 醫師爸爸版 v4.0</p>
     </div>
 
-    <div id="day1" class="day-content active">
-        <div class="date-header">
-            <span style="border-bottom: 4px solid var(--day1-color);">Day 1 聖誕全餐</span>
+    <div class="page-container">
+        
+        <div id="day1" class="tab-content active">
+            <div style="text-align:center; margin-bottom:15px; color:#FF8BA7;">12/23 (二) 聖誕全餐</div>
+            
+            <div class="card food" onclick="openModal('m-d1-1')">
+                <span class="time-badge">10:30</span>
+                <h3>🍜 機場早午餐：何洪記</h3>
+                <p>吃飽才有力氣。</p>
+            </div>
+
+            <div class="card alert" onclick="openModal('m-d1-2')">
+                <span class="time-badge">12:45</span>
+                <h3>😴 飯店強制午睡 (關鍵)</h3>
+                <p>探索家酒店。若沒睡晚上會崩潰。</p>
+            </div>
+
+            <div class="card" onclick="openModal('m-d1-3')">
+                <span class="time-badge">15:00</span>
+                <h3>🏰 入園 & 室內設施</h3>
+                <p>小小世界、迷離大宅。</p>
+            </div>
+
+            <div class="card" onclick="openModal('m-d1-4')">
+                <span class="time-badge">18:20</span>
+                <h3>🌟 聖誕樹亮燈禮</h3>
+                <p>無人機+飄雪，必看重頭戲。</p>
+            </div>
+
+            <div class="card alert" onclick="openModal('m-d1-5')">
+                <span class="time-badge">20:30</span>
+                <h3>🎆 煙火 & 閃電撤退</h3>
+                <p>站在火車站看，結束秒撤。</p>
+            </div>
         </div>
 
-        <div class="card">
-            <div class="time-tag">09:15</div>
-            <h3><span class="icon">✈️</span>抵達香港</h3>
-            <p>機場接機大堂集合。</p>
+        <div id="day2" class="tab-content">
+            <div style="text-align:center; margin-bottom:15px; color:#5D9CEC;">12/24 (三) 平安夜撤退</div>
+            
+            <div class="card" onclick="openModal('m-d2-1')">
+                <span class="time-badge">10:00</span>
+                <h3>❄️ 衝刺：魔雪奇緣世界</h3>
+                <p>魔雪奇幻之旅 (有小俯衝)。</p>
+            </div>
+
+            <div class="card food" onclick="openModal('m-d2-2')">
+                <span class="time-badge">11:30</span>
+                <h3>🍽️ 午餐：大冒險家餐廳</h3>
+                <p>提早吃，避開尖峰。</p>
+            </div>
+
+            <div class="card" onclick="openModal('m-d2-3')">
+                <span class="time-badge">13:30</span>
+                <h3>📖 劇場：魔法書房</h3>
+                <p>爸媽坐著吹冷氣休息 30 分鐘。</p>
+            </div>
+
+            <div class="card alert" onclick="openModal('m-d2-4')">
+                <span class="time-badge">16:00</span>
+                <h3>🚨 嚴格執行：離園</h3>
+                <p>搭計程車去佐敦，避開平安夜塞車。</p>
+            </div>
+
+            <div class="card food" onclick="openModal('m-d2-5')">
+                <span class="time-badge">18:00</span>
+                <h3>🥘 晚餐：逸東軒</h3>
+                <p>米其林一星 (已訂位)。</p>
+            </div>
         </div>
 
-        <div class="card">
-            <div class="time-tag">10:30</div>
-            <h3><span class="icon">🍜</span>何洪記粥麵</h3>
-            <p><strong>@機場T1</strong><br>吃飽飽好辦事！推薦鮮蝦雲吞麵、豬潤粥。</p>
+        <div id="day3" class="tab-content">
+            <div style="text-align:center; margin-bottom:15px; color:#48CFAD;">12/25 (四) 聖誕海景</div>
+            
+            <div class="card food" onclick="openModal('m-d3-1')">
+                <span class="time-badge">09:30</span>
+                <h3>☕ 早餐：紅茶冰室</h3>
+                <p>冰鎮奶茶、菠蘿油。</p>
+            </div>
+
+            <div class="card" onclick="openModal('m-d3-2')">
+                <span class="time-badge">11:00</span>
+                <h3>⛴️ 天星小輪</h3>
+                <p>尖沙咀往中環 (搭上層)。</p>
+            </div>
+
+            <div class="card food" onclick="openModal('m-d3-3')">
+                <span class="time-badge">12:30</span>
+                <h3>🍔 午餐：Shake Shack IFC</h3>
+                <p>無敵海景漢堡 (聖誕人多注意)。</p>
+            </div>
+
+            <div class="card" onclick="openModal('m-d3-4')">
+                <span class="time-badge">15:00</span>
+                <h3>🎄 西九文化區</h3>
+                <p>草地放電、看巨大聖誕樹。</p>
+            </div>
+
+            <div class="card food" onclick="openModal('m-d3-5')">
+                <span class="time-badge">18:00</span>
+                <h3>🍕 晚餐：Cafe Bohème</h3>
+                <p>西九海邊半戶外餐廳。</p>
+            </div>
         </div>
 
-        <div class="card alert-note">
-            <div class="time-tag" style="background:rgba(255,255,255,0.5);">12:45</div>
-            <h3><span class="icon">😴</span>飯店午睡 (重要)</h3>
-            <p>先讓寶寶在<strong>探索家酒店</strong>大廳或花園推車睡 1.5 小時，晚上才有力氣！</p>
+        <div id="day4" class="tab-content">
+            <div style="text-align:center; margin-bottom:15px; color:#FFCE54;">12/26 (五) Outlet & 回家</div>
+            
+            <div class="card food" onclick="openModal('m-d4-1')">
+                <span class="time-badge">08:30</span>
+                <h3>🍳 早餐：澳洲牛奶公司</h3>
+                <p>爸爸外帶回房吃。</p>
+            </div>
+
+            <div class="card" onclick="openModal('m-d4-2')">
+                <span class="time-badge">12:30</span>
+                <h3>🚠 昂坪 360 纜車</h3>
+                <p>水晶車廂 (行李寄放東薈城)。</p>
+            </div>
+
+            <div class="card" onclick="openModal('m-d4-3')">
+                <span class="time-badge">19:00</span>
+                <h3>✈️ 前往機場</h3>
+                <p>S1 巴士或計程車。CI924 返台。</p>
+            </div>
         </div>
 
-        <div class="card">
-            <div class="time-tag">15:00</div>
-            <h3><span class="icon">🏰</span>進迪士尼囉！</h3>
-            <p>先玩室內冷氣房設施：<br>✨ 小小世界<br>✨ 迷離大宅</p>
+        <div id="checklist" class="tab-content">
+            <div style="text-align:center; margin-bottom:15px; color:#AC92EC;">行前準備 & 清單</div>
+            
+            <div class="section-title">👶 幼兒安撫/生存</div>
+            <div class="checklist-item"><label><input type="checkbox"> 小被被/安撫玩偶 (不能洗!)</label></div>
+            <div class="checklist-item"><label><input type="checkbox"> 米餅/果凍/零食 (排隊神器)</label></div>
+            <div class="checklist-item"><label><input type="checkbox"> 降噪耳機/耳塞 (怕煙火聲)</label></div>
+            <div class="checklist-item"><label><input type="checkbox"> 貼紙書/小玩具</label></div>
+
+            <div class="section-title">💊 醫師爸爸藥包</div>
+            <div class="checklist-item"><label><input type="checkbox"> 退燒藥 (Antipyretics)</label></div>
+            <div class="checklist-item"><label><input type="checkbox"> 益生菌/腸胃藥</label></div>
+            <div class="checklist-item"><label><input type="checkbox"> 暈車藥/貼片</label></div>
+            <div class="checklist-item"><label><input type="checkbox"> 外傷藥膏/OK繃</label></div>
+
+            <div class="section-title">👔 衣物 & 雜項</div>
+            <div class="checklist-item"><label><input type="checkbox"> 薄羽絨背心 (洋蔥式穿法)</label></div>
+            <div class="checklist-item"><label><input type="checkbox"> 備用衣物 x 2 (玩Frozen會濕)</label></div>
+            <div class="checklist-item"><label><input type="checkbox"> 輕便推車 (戰車不好上下車)</label></div>
+            <div class="checklist-item"><label><input type="checkbox"> 港幣現金 (計程車/小吃)</label></div>
         </div>
 
-        <div class="card">
-            <div class="time-tag">18:20</div>
-            <h3><span class="icon">🎄</span>聖誕亮燈禮</h3>
-            <p><strong>@美國小鎮大街</strong><br>無人機 + 飄雪，超級夢幻！</p>
-        </div>
-
-        <div class="card" style="background:#2C3E50; color: white;">
-            <div class="time-tag" style="background:#fff; color:#333;">20:30</div>
-            <h3 style="color:#FFF;"><span class="icon">🎆</span>煙火 & 撤退</h3>
-            <p style="color:#EEE;">在火車站附近看。煙火一結束，立刻轉身回飯店洗澡睡覺！</p>
-        </div>
     </div>
 
-    <div id="day2" class="day-content">
-        <div class="date-header">
-            <span style="border-bottom: 4px solid var(--day2-color);">Day 2 平安夜撤退</span>
-        </div>
-
-        <div class="card">
-            <div class="time-tag">10:00</div>
-            <h3><span class="icon">❄️</span>魔雪奇緣世界</h3>
-            <p>衝刺「魔雪奇幻之旅」！<br>(有小俯衝，記得幫寶寶備衣物)</p>
-        </div>
-
-        <div class="card">
-            <div class="time-tag">11:30</div>
-            <h3><span class="icon">🍽️</span>提早午餐</h3>
-            <p><strong>@大冒險家餐廳</strong><br>避開尖峰人潮。</p>
-        </div>
-
-        <div class="card">
-            <div class="time-tag">13:30</div>
-            <h3><span class="icon">📖</span>魔法書房</h3>
-            <p>爸媽的休息站！坐著吹冷氣看表演 30 分鐘。</p>
-        </div>
-
-        <div class="card alert-note">
-            <div class="time-tag" style="background:rgba(255,255,255,0.5);">16:00</div>
-            <h3><span class="icon">🚨</span>全家撤退！</h3>
-            <p>搭計程車去佐敦。<br>平安夜易塞車，<strong>絕對不能晚於 16:30</strong>。</p>
-        </div>
-
-        <div class="card">
-            <div class="time-tag">18:00</div>
-            <h3><span class="icon">🥘</span>逸東軒晚餐</h3>
-            <p>米其林一星粵菜 (已訂位)。吃完回房休息。</p>
-        </div>
+    <div class="nav-bar">
+        <button class="nav-btn active" onclick="switchTab('day1', this)">
+            <span class="nav-icon">🐭</span> Day 1
+        </button>
+        <button class="nav-btn" onclick="switchTab('day2', this)">
+            <span class="nav-icon">❄️</span> Day 2
+        </button>
+        <button class="nav-btn" onclick="switchTab('day3', this)">
+            <span class="nav-icon">🎄</span> Day 3
+        </button>
+        <button class="nav-btn" onclick="switchTab('day4', this)">
+            <span class="nav-icon">✈️</span> Day 4
+        </button>
+        <button class="nav-btn" onclick="switchTab('checklist', this)">
+            <span class="nav-icon">🎒</span> 準備
+        </button>
     </div>
 
-    <div id="day3" class="day-content">
-        <div class="date-header">
-            <span style="border-bottom: 4px solid var(--day3-color);">Day 3 聖誕海景</span>
+    <div id="modal-overlay" class="modal-overlay" onclick="closeModal(event)">
+        <div id="m-d1-1" class="modal-body" style="display:none;">
+            <button class="close-btn" onclick="closeModalDirect()">×</button>
+            <div class="detail-header">
+                <div class="detail-time">Day 1 - 10:30</div>
+                <h2 class="detail-title">何洪記粥麵專家</h2>
+            </div>
+            <div class="section-title">💡 醫師筆記</div>
+            <div class="detail-text">剛下飛機吃飽好辦事。推薦鮮蝦雲吞麵、豬潤粥 (補鐵補體力)。</div>
+            <a href="https://www.google.com/maps/search/?api=1&query=何洪記粥麵專家+香港機場" target="_blank" class="map-btn">📍 Google Maps 導航</a>
         </div>
 
-        <div class="card">
-            <div class="time-tag">09:30</div>
-            <h3><span class="icon">☕</span>紅茶冰室</h3>
-            <p>必吃冰鎮奶茶、菠蘿油！</p>
+        <div id="m-d1-2" class="modal-body" style="display:none;">
+            <button class="close-btn" onclick="closeModalDirect()">×</button>
+            <div class="detail-header">
+                <div class="detail-time">Day 1 - 12:45</div>
+                <h2 class="detail-title">探索家酒店午睡</h2>
+            </div>
+            <div class="section-title">⚠️ 戰術指令</div>
+            <div class="detail-text">不要急著入園！Check-in 後，先在飯店大廳或戶外「雨林花園」推推車讓小孩午睡 1.5 小時。</div>
+            <div class="plan-b-box">
+                <strong>💡 PLAN B (如果大廳太吵)</strong>
+                如果小孩在大廳睡不著，直接推去樂園內的「嬰兒護理室 (Baby Care)」吹冷氣冷靜。
+            </div>
+            <a href="https://www.google.com/maps/search/?api=1&query=迪士尼探索家度假酒店" target="_blank" class="map-btn">📍 Google Maps 導航</a>
         </div>
 
-        <div class="card">
-            <div class="time-
+        <div id="m-d1-3" class="modal-body" style="display:none;">
+            <button class="close-btn" onclick="closeModalDirect()">×</button>
+            <div class="detail-header">
+                <div class="detail-time">Day 1 - 15:00</div>
+                <h2 class="detail-title">室內設施暖身</h2>
+            </div>
+            <div class="section-title">🎯 攻略</div>
+            <div class="detail-text">下午天氣熱或人多，先玩有冷氣的：<br>1. 小小世界 (It's a Small World) - 幼兒神級安撫。<br>2. 迷離大宅 (Mystic Manor) - 無軌道車，若小孩怕黑可跳過。</div>
+        </div>
+
+        <div id="m-d1-4" class="modal-body" style="display:none;">
+            <button class="close-btn" onclick="closeModalDirect()">×</button>
+            <div class="detail-header">
+                <div class="detail-time">Day 1 - 18:20</div>
+                <h2 class="detail-title">夢想成真聖誕樹亮燈禮</h2>
+            </div>
+            <div class="section-title">📍 位置</div>
+            <div class="detail-text">美國小鎮大街聖誕樹前。會有無人機和飄雪效果，非常夢幻。</div>
+        </div>
+
+        <div id="m-d1-5" class="modal-body" style="display:none;">
+            <button class="close-btn" onclick="closeModalDirect()">×</button>
+            <div class="detail-header">
+                <div class="detail-time">Day 1 - 20:30</div>
+                <h2 class="detail-title">煙火 & 閃電撤退</h2>
+            </div>
+            <div class="section-title">⚠️ 撤退戰術</div>
+            <div class="detail-text">不需要擠到城堡正前方。建議在**「美國小鎮大街火車站（入口處）」**附近看。煙火最後一發打完，立刻轉身離園，搶首批接駁車回飯店。</div>
+        </div>
+
+        <div id="m-d2-1" class="modal-body" style="display:none;">
+            <button class="close-btn" onclick="closeModalDirect()">×</button>
+            <div class="detail-header">
+                <div class="detail-time">Day 2 - 10:00</div>
+                <h2 class="detail-title">魔雪奇緣世界</h2>
+            </div>
+            <div class="section-title">💡 注意</div>
+            <div class="detail-text">魔雪奇幻之旅 (Frozen Ever After) 最後有一個小幅度的俯衝（會濕），請評估小孩膽量，或準備備用衣物。</div>
+        </div>
+        
+        <div id="m-d2-2" class="modal-body" style="display:none;">
+            <button class="close-btn" onclick="closeModalDirect()">×</button>
+            <div class="detail-header">
+                <div class="detail-time">Day 2 - 11:30</div>
+                <h2 class="detail-title">大冒險家餐廳</h2>
+            </div>
+            <div class="section-title">💡 攻略</div>
+            <div class="detail-text">迷離莊園旁。建議 11:30 就去吃，避開 12:30-13:30 的恐怖尖峰。</div>
+            <div class="plan-b-box">
+                <strong>💡 PLAN B</strong>
+                若爆滿，改去探險世界的「河景餐廳」，通常人流較少。
+            </div>
+        </div>
+
+        <div id="m-d2-3" class="modal-body" style="display:none;">
+            <button class="close-btn" onclick="closeModalDirect()">×</button>
+            <div class="detail-header">
+                <div class="detail-time">Day 2 - 13:30</div>
+                <h2 class="detail-title">迪士尼魔法書房</h2>
+            </div>
+            <div class="section-title">😴 爸媽補血站</div>
+            <div class="detail-text">室內劇場，坐著吹冷氣看表演 30 分鐘，這是下午體力的關鍵。</div>
+        </div>
+
+        <div id="m-d2-4" class="modal-body" style="display:none;">
+            <button class="close-btn" onclick="closeModalDirect()">×</button>
+            <div class="detail-header">
+                <div class="detail-time">Day 2 - 16:00</div>
+                <h2 class="detail-title">嚴格執行：離園撤退</h2>
+            </div>
+            <div class="section-title">🚨 Critical Checkpoint</div>
+            <div class="detail-text">平安夜香港交通極為恐怖。一定要在 16:30 前搭上計程車離開大嶼山前往佐敦。</div>
+        </div>
+
+        <div id="m-d2-5" class="modal-body" style="display:none;">
+            <button class="close-btn" onclick="closeModalDirect()">×</button>
+            <div class="detail-header">
+                <div class="detail-time">Day 2 - 18:00</div>
+                <h2 class="detail-title">逸東軒 (Yat Tung Heen)</h2>
+            </div>
+            <div class="section-title">🍽️ 米其林一星</div>
+            <div class="detail-text">位於逸東酒店 B2 (已預訂)。吃完直接上樓回房休息。</div>
+            <a href="https://www.google.com/maps/search/?api=1&query=逸東軒+香港" target="_blank" class="map-btn">📍 Google Maps 導航</a>
+        </div>
+
+        <div id="m-d3-1" class="modal-body" style="display:none;">
+            <button class="close-btn" onclick="closeModalDirect()">×</button>
+            <div class="detail-header">
+                <div class="detail-time">Day 3 - 09:30</div>
+                <h2 class="detail-title">紅茶冰室 (佐敦)</h2>
+            </div>
+            <div class="detail-text">必吃：冰鎮奶茶、菠蘿油、芝士蛋治。</div>
+            <a href="https://www.google.com/maps/search/?api=1&query=紅茶冰室+佐敦" target="_blank" class="map-btn">📍 Google Maps 導航</a>
+        </div>
+
+        <div id="m-d3-2" class="modal-body" style="display:none;">
+            <button class="close-btn" onclick="closeModalDirect()">×</button>
+            <div class="detail-header">
+                <div class="detail-time">Day 3 - 11:00</div>
+                <h2 class="detail-title">天星小輪 (Star Ferry)</h2>
+            </div>
+            <div class="section-title">💡 搭乘技巧</div>
+            <div class="detail-text">尖沙咀碼頭 → 中環碼頭。記得搭**上層 (Upper Deck)**，空氣好視野佳。推車上下船需注意坡度。</div>
+        </div>
+
+        <div id="m-d3-3" class="modal-body" style="display:none;">
+            <button class="close-btn" onclick="closeModalDirect()">×</button>
+            <div class="detail-header">
+                <div class="detail-time">Day 3 - 12:30</div>
+                <h2 class="detail-title">Shake Shack (IFC)</h2>
+            </div>
+            <div class="section-title">🍔 戰況預測</div>
+            <div class="detail-text">聖誕節 IFC 4樓這裡是一級戰區。一人佔位，一人點餐。</div>
+            <div class="plan-b-box">
+                <strong>💡 PLAN B (如果沒位子)</strong>
+                1. 去 IFC 1 樓 **City'super** 買烤雞熟食，去 4 樓戶外平台花園野餐。<br>
+                2. 改吃 IFC 2 樓的 **Greyhound Café**。
+            </div>
+            <a href="https://www.google.com/maps/search/?api=1&query=Shake+Shack+IFC" target="_blank" class="map-btn">📍 Google Maps 導航</a>
+        </div>
+
+        <div id="m-d3-4" class="modal-body" style="display:none;">
+            <button class="close-btn" onclick="closeModalDirect()">×</button>
+            <div class="detail-header">
+                <div class="detail-time">Day 3 - 15:00</div>
+                <h2 class="detail-title">西九文化區</h2>
+            </div>
+            <div class="detail-text">讓小孩在草地上跑，看巨型聖誕樹。這裡對寵物和兒童非常友善。</div>
+            <a href="https://www.google.com/maps/search/?api=1&query=西九文化區" target="_blank" class="map-btn">📍 Google Maps 導航</a>
+        </div>
+
+        <div id="m-d3-5" class="modal-body" style="display:none;">
+            <button class="close-btn" onclick="closeModalDirect()">×</button>
+            <div class="detail-header">
+                <div class="detail-time">Day 3 - 18:00</div>
+                <h2 class="detail-title">Cafe Bohème</h2>
+            </div>
+            <div class="detail-text">西九藝術公園地下，半戶外座位。</div>
+            <div class="plan-b-box">
+                <strong>💡 PLAN B (如果爆滿)</strong>
+                撤退至上方 Elements 圓方商場，吃 **PizzaExpress** (親子友善，有畫筆)。
+            </div>
+            <a href="https://www.google.com/maps/search/?api=1&query=Cafe+Boheme+Hong+Kong" target="_blank" class="map-btn">📍 Google Maps 導航</a>
+        </div>
+
+        <div id="m-d4-1" class="modal-body" style="display:none;">
+            <button class="close-btn" onclick="closeModalDirect()">×</button>
+            <div class="detail-header">
+                <div class="detail-time">Day 4 - 08:30</div>
+                <h2 class="detail-title">澳洲牛奶公司</h2>
+            </div>
+            <div class="section-title">👨 爸爸任務</div>
+            <div class="detail-text">外帶炒蛋多士、燉奶回房間吃，避開排隊和推車不便。</div>
+            <a href="https://www.google.com/maps/search/?api=1&query=澳洲牛奶公司" target="_blank" class="map-btn">📍 Google Maps 導航</a>
+        </div>
+
+         <div id="m-d4-2" class="modal-body" style="display:none;">
+            <button class="close-btn" onclick="closeModalDirect()">×</button>
+            <div class="detail-header">
+                <div class="detail-time">Day 4 - 12:30</div>
+                <h2 class="detail-title">昂坪 360 纜車</h2>
+            </div>
+            <div class="section-title">🧳 寄物提示</div>
+            <div class="detail-text">先去東薈城 (Citygate) B2/B3 找寄物櫃。若滿了，詢問服務台人工寄存。</div>
+            <a href="https://www.google.com/maps/search/?api=1&query=昂坪360" target="_blank" class="map-btn">📍 Google Maps 導航</a>
+        </div>
+
+    </div>
+
+    <script>
+        // 頁面切換邏輯
+        function switchTab(tabId, btnElement) {
+            // 1. 隱藏所有 tab-content
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => {
+                content.classList.remove('active');
+            });
+
+            // 2. 顯示目標 tab-content
+            document.getElementById(tabId).classList.add('active');
+
+            // 3. 更新按鈕狀態
+            const btns = document.querySelectorAll('.nav-btn');
+            btns.forEach(btn => {
+                btn.classList.remove('active');
+            });
+            btnElement.classList.add('active');
+
+            // 4. 滾動到頂部
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Modal 開啟邏輯
+        function openModal(modalId) {
+            const overlay = document.getElementById('modal-overlay');
+            const bodies = document.querySelectorAll('.modal-body');
+            
+            // 隱藏所有 modal-body
+            bodies.forEach(body => body.style.display = 'none');
+            
+            // 顯示目標 modal-body
+            const target = document.getElementById(modalId);
+            if(target) {
+                target.style.display = 'block';
+                overlay.classList.add('show');
+                // 禁止背景滾動
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        // Modal 關閉邏輯 (點擊背景)
+        function closeModal(event) {
+            if (event.target.id === 'modal-overlay') {
+                closeModalDirect();
+            }
+        }
+
+        // Modal 關閉邏輯 (點擊按鈕)
+        function closeModalDirect() {
+            const overlay = document.getElementById('modal-overlay');
+            overlay.classList.remove('show');
+            // 恢復背景滾動
+            document.body.style.overflow = '';
+        }
+    </script>
+</body>
+</html>
